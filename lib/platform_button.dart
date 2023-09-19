@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+ // Abstract Method Pattern
 abstract class PlatformButton {
   Widget button(BuildContext context, Widget child, Function? onPressed);
   factory PlatformButton(TargetPlatform targetPlatform) {
