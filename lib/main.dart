@@ -1,74 +1,54 @@
-import 'package:factory_method_app/platform_button.dart';
-import 'package:factory_method_app/singleton_one.dart';
+// ignore_for_file: prefer_const_constructors
+
+import 'package:factory_method_app/constants/themes.dart';
+import 'package:factory_method_app/helpers/theme_manager.dart';
+import 'package:factory_method_app/screens/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(Calculator());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+ThemeManager _themeManager = ThemeManager();
+
+class Calculator extends StatefulWidget {
+  const Calculator({super.key});
+
+  @override
+  State<Calculator> createState() => _CalculatorState();
+}
+
+class _CalculatorState extends State<Calculator> {
+  @override
+  void initState() {
+    _themeManager.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _themeManager.removeListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: _themeManager.themeMode,
+      home: HomePage(
+        themeManager: _themeManager,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  SingletonOne? x = SingletonOne(4 , 8);
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Center(
-              child: PlatformButton(TargetPlatform.android)
-                  .button(context, Text('Android'), () {}),
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print(x?.y);
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), 
     );
   }
 }
